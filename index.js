@@ -3,6 +3,10 @@ if (!Date.now) {
     return new Date().getTime();
   };
 }
+/*
+git remote add origin https://github.com/hollowdoor/horologe.git
+git push -u origin master
+*/
 
 var Emitter = require('more-events').Emitter;
 //http://www.sitepoint.com/creating-accurate-timers-in-javascript/
