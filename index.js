@@ -11,23 +11,20 @@ var Horologe = (function(){
     function Timer(interval, options){
 
         var timeoutId = null,
-            preTimeoutId = null,
             self = this,
             running = false,
             paused = false,
             stopOn = null,
             count = -1,
-            showDiff = typeof options.diff === 'boolean' ? options.diff : false,
-            tickListeners = {};
+            showDiff = typeof options.diff === 'boolean' ? options.diff : false;
 
-        var startTime = Date.now();
+        var startTime = Date.now(),
+            emitter = new Emitter(this);
 
         Object.defineProperties(this, {
             interval:  { get: function(){ return interval; } },
             paused: { get: function(){ return paused; } }
         });
-
-        var emitter = new Emitter(this);
 
         this.on = function(){
             emitter.on.apply(emitter, arguments);
@@ -59,9 +56,9 @@ var Horologe = (function(){
         this.emit = emit;
 
         function stop(){
-            interrupt();
             count = -1;
             stopOn = null;
+            interrupt();
             emit('stop');
             return self;
         }
@@ -102,7 +99,7 @@ var Horologe = (function(){
                 time = !showDiff ? time - diff : time;
 
                 timeoutId = setTimeout(next, interval - diff);
-                emit('tick', time, time - startTime);
+                emit('tick', time, time - startTime /*passed*/);
             }
 
             running = true;
@@ -115,16 +112,19 @@ var Horologe = (function(){
                 if(!paused){
                     startTime = startTime - (startTime % 1000) + 1000;
                 }
-                paused = false;
-                emit('start', startTime);
-                timeoutId = setTimeout(next, startTime - Date.now());
+
+                ready(startTime, next, startTime - Date.now());
                 return self;
             }
 
+            ready(startTime, next, 0);
+            return self;
+        }
+
+        function ready(startTime, next, mil){
             paused = false;
             emit('start', startTime);
-            timeoutId = setTimeout(next, 0);
-            return self;
+            timeoutId = setTimeout(next, mil);
         }
 
         function onTick(listener){
