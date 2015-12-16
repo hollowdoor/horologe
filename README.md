@@ -66,13 +66,25 @@ Start the timer. `amount` is optional. `amount` is an integer for how many times
 
 Stop the timer. Can be called inside the `callback`.
 
-### timer.pause(milliseconds)
+~~### timer.pause(milliseconds)
 
 Pause the timer.
 
 If milliseconds are set then a timer will be created and after milliseconds timeout then the timer will be restarted.
 
-`milliseconds` are optional, and if you don't passed a number to `pause` then the next time you call `start` if you don't pass an amount to `start` then the old amount is used.
+`milliseconds` are optional, and if you don't passed a number to `pause` then the next time you call `start` if you don't pass an amount to `start` then the old amount is used.~~
+
+### timer.pause(pauseTime)
+
+Pause the timer.
+
+`pauseTime` is default true.
+
+`pauseTime` controls what the value of `passed` in the `tick` event listener will be.
+
+If `false` is passed to `pauseTime` then recorded time **while paused** will show up in the `passed` argument of the `tick` listener.
+
+If `true` is passed to `pauseTime`, or left `undefined` then `passed` will not show recorded time **while paused**.
 
 ### on(name, callback)
 

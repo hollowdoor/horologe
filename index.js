@@ -18,8 +18,9 @@ var Horologe = (function(){
             self = this,
             running = false,
             paused = false,
+            pausePassed = false,
             stopOn = null,
-            count = -1,
+            count = 0,
             showDiff = typeof options.diff === 'boolean' ? options.diff : false;
 
         var startTime = Date.now(),
@@ -60,22 +61,26 @@ var Horologe = (function(){
         this.emit = emit;
 
         function stop(){
-            count = -1;
+            count = 0;
             stopOn = null;
             interrupt();
             emit('stop');
             return self;
         }
 
-        function pause(mil){
+        function pause(pauseTime){
             paused = true;
-            interrupt();
             emit('pause');
-            if(!isNaN(mil)){
-                setTimeout(function(){
-                    self.start(stopOn);
-                }, mil);
+            pausePassed = (typeof pauseTime === 'boolean') ? pauseTime : true;
+
+            pauseStable();
+        }
+
+        function pauseStable(){
+            if(!paused){
+                return;
             }
+            setTimeout(pauseStable, 1);
         }
 
         function interrupt(){
@@ -87,13 +92,19 @@ var Horologe = (function(){
 
         function start(times){
             stopOn = isNaN(times) ? stopOn : times;
+            if(paused){
+                //startTime = startTime;// - interval * 2;
+                paused = false;
+                return;
+            }
 
-            if(running)
-                interrupt();
+            if(running){
+                stop();
+            }
 
             function next(){
                 if(!running) return;
-                if(stopOn && ++count === times){
+                if(!paused && stopOn && ++count === stopOn + 2){
                     self.stop();
                     return;
                 }
@@ -103,7 +114,17 @@ var Horologe = (function(){
                 time = !showDiff ? time - diff : time;
 
                 timeoutId = setTimeout(next, interval - diff);
-                emit('tick', time, time - startTime /*passed*/);
+
+                var passed;
+                if(paused){
+                    if(pausePassed){
+                        startTime = startTime + interval;
+                    }
+                    return;
+                }/*else{
+                    passed = time - startTime;
+                }*/
+                emit('tick', time, time - startTime);
             }
 
             running = true;
@@ -115,11 +136,17 @@ var Horologe = (function(){
             if(options.sync){
                 if(!paused){
                     startTime = startTime - (startTime % 1000) + 1000;
-                }
+                }/*else{
+                    startTime = startTime + (startTime - (startTime % 1000) + 1000);
+                }*/
+
+                paused = false;
 
                 ready(startTime, next, startTime - Date.now());
                 return self;
             }
+
+            paused = false;
 
             ready(startTime, next, 0);
             return self;
