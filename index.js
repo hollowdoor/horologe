@@ -28,7 +28,8 @@ var Horologe = (function(){
 
         Object.defineProperties(this, {
             interval:  { get: function(){ return interval; } },
-            paused: { get: function(){ return paused; } }
+            paused: { get: function(){ return paused; } },
+            running: { get: function(){ return running; } }
         });
 
         this.on = function(){
@@ -63,6 +64,7 @@ var Horologe = (function(){
         function stop(){
             count = 0;
             stopOn = null;
+            paused = false;
             interrupt();
             emit('stop');
             return self;
