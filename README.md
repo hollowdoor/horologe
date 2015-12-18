@@ -62,6 +62,8 @@ Methods
 
 Start the timer. `amount` is optional. `amount` is an integer for how many times to run the timer. If amount is not set then the timer will run indefinitely, or until stop is called.
 
+If a number is passed to `amount` a `complete` event will be emitted when the timer ends.
+
 ### timer.stop()
 
 Stop the timer. Can be called inside the `callback`.
@@ -140,6 +142,10 @@ Emitted when the timer is stopped. No arguments are passed to the listener.
 ### pause
 
 Emitted when the timer is paused. No arguments are passed to the listener.
+
+### complete
+
+Emitted when the timer ends, and only if an amount is passed to the `start` method.
 
 About
 -----
