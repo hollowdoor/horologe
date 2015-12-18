@@ -108,7 +108,7 @@ var Horologe = (function(){
                 if(!running) return;
                 if(!paused && stopOn && ++count === stopOn + 2){
                     if(stopOn !== null){
-                        emitter.emit('complete', time, time - startTime);
+                        emitter.emit('complete');
                     }
                     self.stop();
                     return;
