@@ -17,7 +17,11 @@
   },
   "tonicExampleFilename": "example.js",
   "repository": {
-        "type": "git",
-        "url": "https://github.com/hollowdoor/pointer_point.git"
-    }
+    "type": "git",
+    "url": "git+https://github.com/hollowdoor/horologe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hollowdoor/horologe/issues"
+  },
+  "homepage": "https://github.com/hollowdoor/horologe#readme"
 }
