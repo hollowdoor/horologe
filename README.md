@@ -6,6 +6,8 @@ Install
 
 `npm install --save horologe`
 
+`horologe` is now at version 2. There have been changes. Check this documentation to see what is different from version 1.
+
 Usage
 -----
 
@@ -23,7 +25,7 @@ timer.start(20);
 or create, and setup all at once.
 
 ```javascript
-var count = 0, timer = Timer.create(1000, {sync: true}).onTick(onTick).start(5);
+var count = 0, timer = Timer.create(1000, {sync: true}).on('tick', onTick).start(5);
 
 function onTick(time, passed){
     var d = new Date(time);
@@ -31,62 +33,61 @@ function onTick(time, passed){
 }
 ```
 
-Timer.create(interval, options) -> timer
+Timer creation
 ----------------------------------------
+
+### new Timer(interval, options)
 
 `interval` is the time between ticks.
 
 `options` is an optional object argument.
 
+There are two ways to create a timer.
+
+```javascript
+let timer1 = Timer.create(1000, {});
+let timer2 = new Timer(1000, {});
+```
+
 options
 -------
 
-### options.sync = Boolean
+### options.sync = 1000
 
-Should the timer be synchronized to seconds.
+What should the timer be synchronized to? Using milliseconds you can adjust the timer synchronization to system time. Using a falsy value will set *no synchronization*.
 
-### options.diff = Boolean
+### options.tick = null
 
-Should the time argument in the on `tick` callback show the drifting of the timer. The default is false.
+Set a tick function. This is the same as `timer.on('tick', ()=>{})`
 
-A `True` value is good if you want a little sanity in knowing how much the timer is off. The timer is self correcting so there should be enough precision.
+### options.highres = false
 
-A `False` value is good if you want the `time` value in the on `tick` callback to at least resemble the your chosen interval. Usually the timing should be off by at most 2 milliseconds if not zero so it shouldn't be a problem for most usages.
-
-The effects of drifting are emphasized by running code so keep that in mind.
+`options.highres` is an experimental option. Setting it will make the timer use `performance.now()` instead of `Date.now()` for timing.
 
 Methods
 -------
 
-### timer.start(amount)
+### timer.start()
 
-Start the timer. `amount` is optional. `amount` is an integer for how many times to run the timer. If amount is not set then the timer will run indefinitely, or until stop is called.
+Start the timer at the current time.
 
-If a number is passed to `amount` a `complete` event will be emitted when the timer ends.
+### timer.range(amount)
+
+`timer.range(amount)` sets the time range, or when the timer ends. The default is `Infinity`.
 
 ### timer.stop()
 
-Stop the timer. Can be called inside the `callback`.
+Stop the timer.
 
-~~### timer.pause(milliseconds)
 
-Pause the timer.
-
-If milliseconds are set then a timer will be created and after milliseconds timeout then the timer will be restarted.
-
-`milliseconds` are optional, and if you don't passed a number to `pause` then the next time you call `start` if you don't pass an amount to `start` then the old amount is used.~~
-
-### timer.pause(pauseTime)
+### timer.pause(limit)
 
 Pause the timer.
 
-`pauseTime` is default true.
+`limit` has a default of `Infinity`.
 
-`pauseTime` controls what the value of `passed` in the `tick` event listener will be.
+`limit` controls how long the timer will be paused.
 
-If `false` is passed to `pauseTime` then recorded time **while paused** will show up in the `passed` argument of the `tick` listener.
-
-If `true` is passed to `pauseTime`, or left `undefined` then `passed` will not show recorded time **while paused**.
 
 ### on(name, callback)
 
@@ -99,10 +100,6 @@ Remove a listener.
 ### dispose()
 
 Destroy the timer.
-
-### onTick(callback), offTick(callback)
-
-Aliases to `on('tick', callback)`, and `off('tick', callback)` respectively.
 
 Events
 ------
