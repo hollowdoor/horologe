@@ -58,7 +58,9 @@ export default class Timer extends Emitter {
         Object.defineProperties(this, {
             interval: {get(){ return interval; }},
             paused: {get(){ return paused; }},
-            running: {get(){ return running; }}
+            running: {get(){ return running; }},
+            count: {get(){ return count; }},
+            percent: {get(){ return count / (timeRange / interval) * 100; }}
         });
 
         let interrupt = ()=>{

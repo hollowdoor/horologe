@@ -65,7 +65,9 @@ var Timer = (function (Emitter) {
         Object.defineProperties(this, {
             interval: {get: function get(){ return interval; }},
             paused: {get: function get(){ return paused; }},
-            running: {get: function get(){ return running; }}
+            running: {get: function get(){ return running; }},
+            count: {get: function get(){ return count; }},
+            percent: {get: function get(){ return count / (timeRange / interval) * 100; }}
         });
 
         var interrupt = function (){
