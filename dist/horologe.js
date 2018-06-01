@@ -144,7 +144,10 @@ var horologe = (function () {
                 if(!running) { return; }
 
                 var time = now();
-                var diff = (time - startTime) % interval;
+                //The less accurate diffing
+                //var diff = (time - startTime) % interval;
+                var diff = (time - startTime) - count * interval;
+
                 time = time - diff;
 
                 if(paused){
