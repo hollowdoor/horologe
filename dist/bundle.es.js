@@ -93,7 +93,7 @@ var Timer = (function (Emitter$$1) {
             time = time - diff;
 
             if(paused){
-                if(time >= pauseTime + startTime) { return; }
+                if(time < pauseTime) { return; }
                 paused = false;
             }
 
@@ -113,6 +113,7 @@ var Timer = (function (Emitter$$1) {
         function stop(){
             count = 0;
             paused = false;
+            pauseTime = Infinity;
             startTime = null;
             interrupt();
             this.emit('stop');
@@ -123,7 +124,7 @@ var Timer = (function (Emitter$$1) {
             if ( limit === void 0 ) limit = Infinity;
 
             paused = true;
-            pauseTime = limit;
+            pauseTime = limit + now();
             this.emit('pause');
             return this;
         }

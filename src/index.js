@@ -87,7 +87,7 @@ export default class Timer extends Emitter {
             time = time - diff;
 
             if(paused){
-                if(time >= pauseTime + startTime) return;
+                if(time < pauseTime) return;
                 paused = false;
             }
 
@@ -108,6 +108,7 @@ export default class Timer extends Emitter {
             count = 0;
             stopOn = Infinity;
             paused = false;
+            pauseTime = Infinity;
             startTime = null;
             interrupt();
             this.emit('stop');
@@ -116,7 +117,7 @@ export default class Timer extends Emitter {
 
         function pause(limit = Infinity){
             paused = true;
-            pauseTime = limit;
+            pauseTime = limit + now();
             this.emit('pause');
             return this;
         }
