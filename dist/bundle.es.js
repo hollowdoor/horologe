@@ -52,6 +52,7 @@ var Timer = (function (Emitter$$1) {
             running = false,
             paused = false,
             count = 0,
+            pauseTime = Infinity,
             timeRange = Infinity,
             startTime = now();
 

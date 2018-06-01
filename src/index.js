@@ -45,7 +45,7 @@ export default class Timer extends Emitter {
             paused = false,
             pausePassed = false,
             count = 0,
-            pauseTimes = 0,
+            pauseTime = Infinity,
             timeRange = Infinity,
             stopOn = Infinity,
             startTime = now();
