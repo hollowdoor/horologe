@@ -44,6 +44,7 @@ var Timer = (function (Emitter) {
         var sync = ref.sync; if ( sync === void 0 ) sync = 1000;
         var tick = ref.tick; if ( tick === void 0 ) tick = null;
         var highres = ref.highres; if ( highres === void 0 ) highres = false;
+        var skip = ref.skip; if ( skip === void 0 ) skip = true;
 
 
         Emitter.call(this);
@@ -56,7 +57,9 @@ var Timer = (function (Emitter) {
             count = 0,
             pauseTime = Infinity,
             timeRange = Infinity,
-            startTime = now();
+            startTime = now(),
+            pausedTime = 0,
+            pauseStart = 0;
 
 
         if(typeof tick === 'function'){
@@ -80,6 +83,7 @@ var Timer = (function (Emitter) {
 
         var ready = function (startTime, next, mil){
             paused = false;
+            running = true;
             timeoutId = setTimeout(next, mil);
             this$1.emit('start', startTime);
         };
@@ -94,22 +98,25 @@ var Timer = (function (Emitter) {
 
             time = time - diff;
 
-            if(paused){
-                if(time < pauseTime) { return; }
-                paused = false;
-            }
+            var passed = time - startTime - pausedTime;
 
-            if(count > timeRange / interval){
+            if(time > startTime + timeRange + pausedTime){
                 this$1.emit('complete');
                 this$1.stop();
                 return;
             }
 
-            var passed = time - startTime;
-
             timeoutId = setTimeout(next, interval - diff);
 
-            this$1.emit('tick', time, passed, diff);
+            if(!paused){
+                this$1.emit('tick', time, passed, diff);
+            }else{
+                pausedTime = time - pauseStart + pausedTime;
+                if(time < pauseTime){
+                    return;
+                }
+                paused = false;
+            }
         };
 
         function stop(){
@@ -126,7 +133,12 @@ var Timer = (function (Emitter) {
             if ( limit === void 0 ) limit = Infinity;
 
             paused = true;
-            pauseTime = limit + now();
+            pauseStart = now();
+            if(sync){
+                pauseStart = pauseStart - (pauseStart % sync) + sync;
+            }
+
+            pauseTime = limit + pauseStart;
             this.emit('pause');
             return this;
         }
@@ -140,17 +152,8 @@ var Timer = (function (Emitter) {
         }
 
         function start(){
-            //stopOn = timeRange / interval;
 
-            if(running){
-                this.stop();
-            }
-
-            running = true;
-
-            if(paused){
-                paused = false;
-            }else{
+            if(!paused){
                 startTime = now();
             }
 
