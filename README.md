@@ -87,6 +87,10 @@ How many ticks of the timer have been done?
 
 What's the percentage of time complete until the timer is stopped by it's range? If the range is infinite `timer.percent` returns zero.
 
+### timer.startTime
+
+Get the time that the timer started. `timer.startTime` returns `null` if the timer is not running.
+
 Methods
 -------
 

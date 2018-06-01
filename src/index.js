@@ -60,7 +60,8 @@ export default class Timer extends Emitter {
             paused: {get(){ return paused; }},
             running: {get(){ return running; }},
             count: {get(){ return count; }},
-            percent: {get(){ return count / (timeRange / interval) * 100; }}
+            percent: {get(){ return count / (timeRange / interval) * 100; }},
+            startTime: {get(){ return startTime; }}
         });
 
         let interrupt = ()=>{
@@ -81,7 +82,7 @@ export default class Timer extends Emitter {
             var time = now();
             //The less accurate diffing
             //var diff = (time - startTime) % interval;
-            var diff = (time - startTime) - count * interval;
+            var diff = (time - startTime) - (++count * interval);
 
             time = time - diff;
 
@@ -90,21 +91,24 @@ export default class Timer extends Emitter {
                 paused = false;
             }
 
-            if(++count > timeRange / interval){
+            if(count > timeRange / interval){
                 this.emit('complete');
                 this.stop();
                 return;
             }
 
+            let passed = time - startTime;
+
             timeoutId = setTimeout(next, interval - diff);
 
-            this.emit('tick', time, time - startTime, diff);
+            this.emit('tick', time, passed, diff);
         };
 
         function stop(){
             count = 0;
             stopOn = Infinity;
             paused = false;
+            startTime = null;
             interrupt();
             this.emit('stop');
             return this;
@@ -145,11 +149,11 @@ export default class Timer extends Emitter {
                     startTime = startTime - (startTime % sync) + sync;
                 }
 
-                ready(startTime, next, startTime - now());
+                ready(startTime, next, startTime - now() + interval);
                 return this;
             }
 
-            ready(startTime, next, 0);
+            ready(startTime, next, interval);
             return this;
         }
 

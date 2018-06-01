@@ -125,7 +125,8 @@ var horologe = (function () {
                 paused: {get: function get(){ return paused; }},
                 running: {get: function get(){ return running; }},
                 count: {get: function get(){ return count; }},
-                percent: {get: function get(){ return count / (timeRange / interval) * 100; }}
+                percent: {get: function get(){ return count / (timeRange / interval) * 100; }},
+                startTime: {get: function get(){ return startTime; }}
             });
 
             var interrupt = function (){
@@ -146,7 +147,7 @@ var horologe = (function () {
                 var time = now();
                 //The less accurate diffing
                 //var diff = (time - startTime) % interval;
-                var diff = (time - startTime) - count * interval;
+                var diff = (time - startTime) - (++count * interval);
 
                 time = time - diff;
 
@@ -155,20 +156,23 @@ var horologe = (function () {
                     paused = false;
                 }
 
-                if(++count > timeRange / interval){
+                if(count > timeRange / interval){
                     this$1.emit('complete');
                     this$1.stop();
                     return;
                 }
 
+                var passed = time - startTime;
+
                 timeoutId = setTimeout(next, interval - diff);
 
-                this$1.emit('tick', time, time - startTime, diff);
+                this$1.emit('tick', time, passed, diff);
             };
 
             function stop(){
                 count = 0;
                 paused = false;
+                startTime = null;
                 interrupt();
                 this.emit('stop');
                 return this;
@@ -211,11 +215,11 @@ var horologe = (function () {
                         startTime = startTime - (startTime % sync) + sync;
                     }
 
-                    ready(startTime, next, startTime - now());
+                    ready(startTime, next, startTime - now() + interval);
                     return this;
                 }
 
-                ready(startTime, next, 0);
+                ready(startTime, next, interval);
                 return this;
             }
 
