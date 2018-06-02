@@ -113,11 +113,9 @@ var horologe = (function () {
                 running = false,
                 paused = false,
                 count = 0,
-                pauseTime = Infinity,
                 timeRange = Infinity,
                 startTime = now(),
-                pausedTime = 0,
-                pauseStart = 0;
+                pauseCount = 0;
 
 
             if(typeof tick === 'function'){
@@ -130,7 +128,7 @@ var horologe = (function () {
                 running: {get: function get(){ return running; }},
                 count: {get: function get(){ return count; }},
                 percent: {get: function get(){
-                    return ~~((count - pausedTime / interval) / (timeRange / interval) * 100 + 0.5);
+                    return ~~((count - pauseCount * interval / interval) / (timeRange / interval) * 100 + 0.5);
                 }},
                 startTime: {get: function get(){ return startTime; }}
             });
@@ -158,9 +156,9 @@ var horologe = (function () {
 
                 time = time - diff;
 
-                var passed = time - startTime - pausedTime;
+                var passed = (time - startTime) - pauseCount * interval;
 
-                if(time > startTime + timeRange + pausedTime){
+                if(time > startTime + timeRange + pauseCount * interval){
                     this$1.emit('complete');
                     this$1.stop();
                     return;
@@ -171,8 +169,8 @@ var horologe = (function () {
                 if(!paused){
                     this$1.emit('tick', time, passed, diff);
                 }else{
-                    pausedTime = time - pauseStart + pausedTime;
-                    if(time < pauseTime){
+                    ++pauseCount;
+                    if(time < pauseCount * interval){
                         return;
                     }
                     paused = false;
@@ -182,8 +180,7 @@ var horologe = (function () {
             function stop(){
                 count = 0;
                 paused = false;
-                pauseTime = Infinity;
-                pausedTime = 0;
+                pauseCount = 0;
                 startTime = null;
                 interrupt();
                 this.emit('stop');
@@ -194,12 +191,6 @@ var horologe = (function () {
                 if ( limit === void 0 ) limit = Infinity;
 
                 paused = true;
-                pauseStart = now();
-                if(sync){
-                    pauseStart = pauseStart - (pauseStart % sync) + sync;
-                }
-
-                pauseTime = limit + pauseStart;
                 this.emit('pause');
                 return this;
             }

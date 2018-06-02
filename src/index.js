@@ -46,12 +46,10 @@ export default class Timer extends Emitter {
             paused = false,
             pausePassed = false,
             count = 0,
-            pauseTime = Infinity,
             timeRange = Infinity,
             stopOn = Infinity,
             startTime = now(),
-            pausedTime = 0,
-            pauseStart = 0;
+            pauseCount = 0;
 
 
         if(typeof tick === 'function'){
@@ -64,7 +62,7 @@ export default class Timer extends Emitter {
             running: {get(){ return running; }},
             count: {get(){ return count; }},
             percent: {get(){
-                return ~~((count - pausedTime / interval) / (timeRange / interval) * 100 + 0.5);
+                return ~~((count - pauseCount * interval / interval) / (timeRange / interval) * 100 + 0.5);
             }},
             startTime: {get(){ return startTime; }}
         });
@@ -92,9 +90,9 @@ export default class Timer extends Emitter {
 
             time = time - diff;
 
-            let passed = time - startTime - pausedTime;
+            let passed = (time - startTime) - pauseCount * interval;
 
-            if(time > startTime + timeRange + pausedTime){
+            if(time > startTime + timeRange + pauseCount * interval){
                 this.emit('complete');
                 this.stop();
                 return;
@@ -105,8 +103,8 @@ export default class Timer extends Emitter {
             if(!paused){
                 this.emit('tick', time, passed, diff);
             }else{
-                pausedTime = time - pauseStart + pausedTime;
-                if(time < pauseTime){
+                ++pauseCount;
+                if(time < pauseCount * interval){
                     return;
                 }
                 paused = false;
@@ -117,8 +115,7 @@ export default class Timer extends Emitter {
             count = 0;
             stopOn = Infinity;
             paused = false;
-            pauseTime = Infinity;
-            pausedTime = 0;
+            pauseCount = 0;
             startTime = null;
             interrupt();
             this.emit('stop');
@@ -127,12 +124,6 @@ export default class Timer extends Emitter {
 
         function pause(limit = Infinity){
             paused = true;
-            pauseStart = now();
-            if(sync){
-                pauseStart = pauseStart - (pauseStart % sync) + sync;
-            }
-
-            pauseTime = limit + pauseStart;
             this.emit('pause');
             return this;
         }
