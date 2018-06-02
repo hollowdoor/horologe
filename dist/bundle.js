@@ -57,7 +57,8 @@ var Timer = (function (Emitter) {
             count = 0,
             timeRange = Infinity,
             startTime = now(),
-            pauseCount = 0;
+            pauseCount = 0,
+            pauseLimit = Infinity;
 
 
         if(typeof tick === 'function'){
@@ -112,10 +113,9 @@ var Timer = (function (Emitter) {
                 this$1.emit('tick', time, passed, diff);
             }else{
                 ++pauseCount;
-                if(time < pauseCount * interval){
-                    return;
+                if(pauseCount * interval > pauseLimit){
+                    this$1.start();
                 }
-                paused = false;
             }
         };
 
@@ -133,6 +133,7 @@ var Timer = (function (Emitter) {
             if ( limit === void 0 ) limit = Infinity;
 
             paused = true;
+            pauseLimit = limit;
             this.emit('pause');
             return this;
         }
