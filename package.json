@@ -1,6 +1,6 @@
 {
   "name": "horologe",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "An interval timer",
   "main": "dist/bundle.js",
   "scripts": {
