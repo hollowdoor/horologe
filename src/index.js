@@ -63,7 +63,9 @@ export default class Timer extends Emitter {
             paused: {get(){ return paused; }},
             running: {get(){ return running; }},
             count: {get(){ return count; }},
-            percent: {get(){ return count / (timeRange / interval) * 100; }},
+            percent: {get(){
+                return ~~((count - pausedTime / interval) / (timeRange / interval) * 100 + 0.5);
+            }},
             startTime: {get(){ return startTime; }}
         });
 
