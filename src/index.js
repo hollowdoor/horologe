@@ -118,6 +118,7 @@ export default class Timer extends Emitter {
             stopOn = Infinity;
             paused = false;
             pauseTime = Infinity;
+            pausedTime = 0;
             startTime = null;
             interrupt();
             this.emit('stop');

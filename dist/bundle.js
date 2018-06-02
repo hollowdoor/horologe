@@ -125,6 +125,7 @@ var Timer = (function (Emitter) {
             count = 0;
             paused = false;
             pauseTime = Infinity;
+            pausedTime = 0;
             startTime = null;
             interrupt();
             this.emit('stop');
