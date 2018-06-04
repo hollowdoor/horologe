@@ -99,7 +99,7 @@ export default class Timer extends Emitter {
                 this.emit('tick', time, passed, diff);
             }else{
                 ++pauseCount;
-                if(pauseCount * interval > pauseLimit){
+                if((pauseCount + 1) * interval > pauseLimit){
                     this.start();
                 }
             }
@@ -143,11 +143,12 @@ export default class Timer extends Emitter {
             }
 
             if(sync){
+                let original = startTime;
                 if(!paused){
-                    startTime = startTime - (startTime % sync) + sync;
+                    startTime = startTime - (startTime % sync);
                 }
 
-                ready(startTime, next, startTime - now() + interval);
+                ready(startTime, next, original - startTime);
                 return this;
             }
 

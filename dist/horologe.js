@@ -165,7 +165,7 @@ var horologe = (function () {
                     this$1.emit('tick', time, passed, diff);
                 }else{
                     ++pauseCount;
-                    if(pauseCount * interval > pauseLimit){
+                    if((pauseCount + 1) * interval > pauseLimit){
                         this$1.start();
                     }
                 }
@@ -210,11 +210,12 @@ var horologe = (function () {
                 }
 
                 if(sync){
+                    var original = startTime;
                     if(!paused){
-                        startTime = startTime - (startTime % sync) + sync;
+                        startTime = startTime - (startTime % sync);
                     }
 
-                    ready(startTime, next, startTime - now() + interval);
+                    ready(startTime, next, original - startTime);
                     return this;
                 }
 
