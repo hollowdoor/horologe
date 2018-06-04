@@ -101,12 +101,6 @@ var Timer = (function (Emitter) {
 
             var passed = (time - startTime) - pauseCount * interval;
 
-            if(time > startTime + timeRange + pauseCount * interval){
-                this$1.emit('complete');
-                this$1.stop();
-                return;
-            }
-
             timeoutId = setTimeout(next, interval - diff);
 
             if(!paused){
@@ -116,6 +110,11 @@ var Timer = (function (Emitter) {
                 if(pauseCount * interval > pauseLimit){
                     this$1.start();
                 }
+            }
+
+            if(time > startTime + timeRange + pauseCount * interval){
+                this$1.emit('complete');
+                this$1.stop();
             }
         };
 

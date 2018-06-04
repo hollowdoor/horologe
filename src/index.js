@@ -93,12 +93,6 @@ export default class Timer extends Emitter {
 
             let passed = (time - startTime) - pauseCount * interval;
 
-            if(time > startTime + timeRange + pauseCount * interval){
-                this.emit('complete');
-                this.stop();
-                return;
-            }
-
             timeoutId = setTimeout(next, interval - diff);
 
             if(!paused){
@@ -108,6 +102,11 @@ export default class Timer extends Emitter {
                 if(pauseCount * interval > pauseLimit){
                     this.start();
                 }
+            }
+
+            if(time > startTime + timeRange + pauseCount * interval){
+                this.emit('complete');
+                this.stop();
             }
         };
 
