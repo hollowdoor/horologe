@@ -94,9 +94,13 @@ Get the time that the timer started. `timer.startTime` returns `null` if the tim
 Methods
 -------
 
-### timer.start()
+### timer.start(wait)
 
 Start the timer at the current time.
+
+The `wait` parameter is optional. Specify an integer duration for the first tick to wait. If wait isn't set then the most optimal period before the first tick is chosen using rounding to the nearest interval in the past, or future.
+
+If the timer has already started, and hasn't been paused `timer.start()` does nothing.
 
 ### timer.range(amount)
 
@@ -104,7 +108,7 @@ Start the timer at the current time.
 
 ### timer.stop()
 
-Stop the timer.
+Stop the timer. `timer.stop()` resets the timer entirely to a non-running, and non-paused state.
 
 
 ### timer.pause(limit)

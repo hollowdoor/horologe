@@ -136,7 +136,46 @@ export default class Timer extends Emitter {
             return this;
         }
 
-        function start(){
+        function start(wait = 0){
+            let i = interval;
+
+            if(!paused && running){
+                return this;
+            }
+
+            if(wait){
+                i = wait;
+
+                if(!paused){
+                    startTime = now();
+
+                    if(sync){
+                        let diff = startTime % sync;
+                        let round = wait < interval
+                        ? 0 : interval;
+
+                        startTime = startTime - diff + round;
+                    }
+                }
+            }else if(!paused){
+                startTime = now();
+
+                if(sync){
+                    let diff = startTime % sync;
+                    let round = diff < interval / 2
+                    ? 0 : interval;
+
+                    startTime = startTime - diff + round;
+
+                    i = diff + round;
+                }
+            }
+
+            ready(startTime, next, i);
+            return this;
+        }
+
+        /*function start(wait = 0){
 
             if(!paused){
                 startTime = now();
@@ -144,17 +183,29 @@ export default class Timer extends Emitter {
 
             if(sync){
                 let original = startTime;
+                let startInterval = wait ? wait : interval;
+
+
+
                 if(!paused){
-                    startTime = startTime - (startTime % sync);
+                    let diff = startTime % sync;
+                    startTime = startTime - diff + wait;
+                    startInterval = wait
+                    ? wait
+                    : interval - diff + interval;
                 }
 
-                ready(startTime, next, original - startTime);
+                console.log('original ',original)
+                console.log('startTime ',startTime)
+                console.log('startInterval ',startInterval)
+
+                ready(startTime, next, startInterval);
                 return this;
             }
 
-            ready(startTime, next, interval);
+            ready(startTime, next, interval + wait);
             return this;
-        }
+        }*/
 
         this.stop = stop;
         this.pause = pause;

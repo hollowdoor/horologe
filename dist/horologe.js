@@ -203,25 +203,78 @@ var horologe = (function () {
                 return this;
             }
 
-            function start(){
+            function start(wait){
+                if ( wait === void 0 ) wait = 0;
+
+                var i = interval;
+
+                if(!paused && running){
+                    return this;
+                }
+
+                if(wait){
+                    i = wait;
+
+                    if(!paused){
+                        startTime = now();
+
+                        if(sync){
+                            var diff = startTime % sync;
+                            var round = wait < interval
+                            ? 0 : interval;
+
+                            startTime = startTime - diff + round;
+                        }
+                    }
+                }else if(!paused){
+                    startTime = now();
+
+                    if(sync){
+                        var diff$1 = startTime % sync;
+                        var round$1 = diff$1 < interval / 2
+                        ? 0 : interval;
+
+                        startTime = startTime - diff$1 + round$1;
+
+                        i = diff$1 + round$1;
+                    }
+                }
+
+                ready(startTime, next, i);
+                return this;
+            }
+
+            /*function start(wait = 0){
 
                 if(!paused){
                     startTime = now();
                 }
 
                 if(sync){
-                    var original = startTime;
+                    let original = startTime;
+                    let startInterval = wait ? wait : interval;
+
+
+
                     if(!paused){
-                        startTime = startTime - (startTime % sync);
+                        let diff = startTime % sync;
+                        startTime = startTime - diff + wait;
+                        startInterval = wait
+                        ? wait
+                        : interval - diff + interval;
                     }
 
-                    ready(startTime, next, original - startTime);
+                    console.log('original ',original)
+                    console.log('startTime ',startTime)
+                    console.log('startInterval ',startInterval)
+
+                    ready(startTime, next, startInterval);
                     return this;
                 }
 
-                ready(startTime, next, interval);
+                ready(startTime, next, interval + wait);
                 return this;
-            }
+            }*/
 
             this.stop = stop;
             this.pause = pause;
