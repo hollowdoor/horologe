@@ -173,7 +173,13 @@ Emitted when the timer is paused. No arguments are passed to the listener.
 
 ### complete
 
-Emitted when the timer ends, and only if an amount is passed to the `start` method.
+Emitted when the timer ends, and only if an amount is passed to the `range` method.
+
+```javascript
+timer.on('complete', (time, passed)=>{
+
+});
+```
 
 About
 -----

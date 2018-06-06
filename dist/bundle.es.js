@@ -111,7 +111,7 @@ var Timer = (function (Emitter$$1) {
             }
 
             if(time > startTime + timeRange + pauseCount * interval){
-                this$1.emit('complete');
+                this$1.emit('complete', time, passed);
                 this$1.stop();
             }
         };

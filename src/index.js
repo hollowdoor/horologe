@@ -105,7 +105,7 @@ export default class Timer extends Emitter {
             }
 
             if(time > startTime + timeRange + pauseCount * interval){
-                this.emit('complete');
+                this.emit('complete', time, passed);
                 this.stop();
             }
         };
