@@ -34,7 +34,8 @@ export default class Timer extends Emitter {
         sync = 1000,
         tick = null,
         highres = false,
-        skip = true
+        skip = true,
+        name = ''
     } = {}){
 
         super();
@@ -65,7 +66,8 @@ export default class Timer extends Emitter {
             percent: {get(){
                 return ~~((count - pauseCount * interval / interval) / (timeRange / interval) * 100 + 0.5);
             }},
-            startTime: {get(){ return startTime; }}
+            startTime: {get(){ return startTime; }},
+            name: { value: name }
         });
 
         let interrupt = ()=>{

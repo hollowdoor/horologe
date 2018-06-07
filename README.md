@@ -64,6 +64,10 @@ Set a tick function. This is the same as `timer.on('tick', ()=>{})`
 
 `options.highres` is an experimental option. Setting it will make the timer use `performance.now()` instead of `Date.now()` for timing.
 
+### options.name
+
+Set the name property of the timer.
+
 Properties
 ----
 
@@ -86,6 +90,10 @@ How many ticks of the timer have been done?
 ### timer.percent
 
 What's the percentage of time complete until the timer is stopped by it's range? If the range is infinite `timer.percent` returns zero.
+
+### timer.name
+
+The name set in the options.
 
 ### timer.startTime
 

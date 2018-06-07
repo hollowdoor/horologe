@@ -103,6 +103,7 @@ var horologe = (function () {
             var tick = ref.tick; if ( tick === void 0 ) tick = null;
             var highres = ref.highres; if ( highres === void 0 ) highres = false;
             var skip = ref.skip; if ( skip === void 0 ) skip = true;
+            var name = ref.name; if ( name === void 0 ) name = '';
 
 
             Emitter$$1.call(this);
@@ -131,7 +132,8 @@ var horologe = (function () {
                 percent: {get: function get(){
                     return ~~((count - pauseCount * interval / interval) / (timeRange / interval) * 100 + 0.5);
                 }},
-                startTime: {get: function get(){ return startTime; }}
+                startTime: {get: function get(){ return startTime; }},
+                name: { value: name }
             });
 
             var interrupt = function (){
